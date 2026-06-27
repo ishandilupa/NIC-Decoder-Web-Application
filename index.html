@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0F172A" />
+  <title>NIC Decoded — Sri Lankan Identity Card Parser</title>
+  <meta name="description" content="Instantly decode and parse Sri Lankan National Identity Card (NIC) numbers. Extract date of birth, gender, age, voting status, and zodiac sign in one tap." />
+  <meta name="keywords" content="NIC decoder, Sri Lanka NIC, National Identity Card, NIC parser, Sri Lanka ID" />
+  <meta property="og:title" content="NIC Decoded — Sri Lankan Identity Card Parser" />
+  <meta property="og:description" content="Instantly decode Sri Lankan NIC numbers with a beautiful, modern interface." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Background Orbs -->
+  <div class="bg-orb bg-orb--1" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb--2" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb--3" aria-hidden="true"></div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="alert" aria-live="polite" aria-atomic="true">
+    <div class="toast__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <span id="toast-message" class="toast__message"></span>
+  </div>
+
+  <!-- App Shell -->
+  <div class="app-shell">
+
+    <!-- ═══════════════════════════════════════
+         HEADER
+    ══════════════════════════════════════════ -->
+    <header class="header" role="banner">
+      <div class="header__brand">
+        <div class="header__logo" aria-hidden="true">
+          <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="36" height="36" rx="10" fill="url(#logo-grad)"/>
+            <path d="M10 12h16M10 18h10M10 24h13" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="26" cy="22" r="4" fill="#06B6D4" stroke="white" stroke-width="1.5"/>
+            <defs>
+              <linearGradient id="logo-grad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366F1"/>
+                <stop offset="1" stop-color="#4F46E5"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="header__title-group">
+          <h1 class="header__app-name">NIC <span class="header__highlight">Decoded</span></h1>
+          <p class="header__tagline">Sri Lankan Identity Card Parser</p>
+        </div>
+      </div>
+
+      <div class="header__controls">
+        <button id="sound-toggle" class="icon-btn" aria-label="Toggle sound feedback" title="Toggle Sound" aria-pressed="true">
+          <svg id="sound-on-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+          <svg id="sound-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+        </button>
+
+        <button id="theme-info-btn" class="icon-btn" aria-label="App information" title="App Info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════
+         INPUT SECTION
+    ══════════════════════════════════════════ -->
+    <main class="main-content" role="main">
+      <section class="input-section" aria-label="NIC Input">
+        <div class="input-card glass-card">
+          <div class="input-card__header">
+            <span class="input-card__label">Enter NIC Number</span>
+            <div class="format-badge-group" role="group" aria-label="Supported NIC formats">
+              <span class="format-badge format-badge--old">Old: 9+V/X</span>
+              <span class="format-badge format-badge--new">New: 12 Digits</span>
+            </div>
+          </div>
+
+          <div class="input-wrapper" id="input-wrapper">
+            <div class="input-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+              </svg>
+            </div>
+
+            <input
+              type="text"
+              id="nic-input"
+              class="nic-input"
+              placeholder="e.g., 850421234V or 198504210034"
+              maxlength="12"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              aria-label="NIC Number Input"
+              aria-describedby="nic-input-hint"
+            />
+
+            <div class="input-status" id="input-status" aria-hidden="true"></div>
+
+            <button id="scan-btn" class="scan-btn" aria-label="Scan NIC Card with camera (coming soon)" title="Scan Card (Coming Soon)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <span class="scan-btn__tooltip">OCR Coming Soon</span>
+            </button>
+          </div>
+
+          <p id="nic-input-hint" class="input-hint">
+            <span class="input-hint__dot"></span>
+            Supports Old Format (9 digits + V/X) and New Format (12 digits)
+          </p>
+        </div>
+
+        <!-- Decode Button -->
+        <button id="decode-btn" class="decode-btn" aria-label="Decode NIC Number">
+          <span class="decode-btn__content">
+            <svg class="decode-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+            </svg>
+            <span class="decode-btn__text">Decode Identity</span>
+          </span>
+          <div class="decode-btn__shimmer" aria-hidden="true"></div>
+        </button>
+      </section>
+
+      <!-- ═══════════════════════════════════════
+           RESULTS BENTO GRID
+      ══════════════════════════════════════════ -->
+      <section id="results-section" class="results-section" aria-label="Decoded NIC Results" aria-live="polite" hidden>
+
+        <!-- NIC Format Badge -->
+        <div class="results-header">
+          <div class="results-nic-display">
+            <span class="results-nic-label">Decoded</span>
+            <span id="results-nic-value" class="results-nic-value"></span>
+          </div>
+          <div id="format-indicator" class="format-indicator"></div>
+        </div>
+
+        <!-- Bento Grid -->
+        <div class="bento-grid" role="list" aria-label="Identity information cards">
+
+          <!-- Card 1: Date of Birth (Large) -->
+          <article class="bento-card bento-card--large bento-card--dob" role="listitem" aria-label="Date of Birth">
+            <div class="bento-card__accent-line"></div>
+            <div class="bento-card__inner">
+              <div class="bento-card__header">
+                <div class="bento-card__icon-wrap bento-card__icon-wrap--cyan">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </div>
+                <span class="bento-card__label">Date of Birth</span>
+              </div>
+              <div class="bento-card__content">
+                <div id="dob-day-of-week" class="dob__day-of-week"></div>
+                <div id="dob-main" class="dob__main"></div>
+                <div id="dob-sub" class="dob__sub"></div>
+              </div>
+              <div class="birthday-countdown" id="birthday-countdown">
+                <div class="birthday-countdown__icon" aria-hidden="true">🎂</div>
+                <div class="birthday-countdown__text">
+                  <span class="birthday-countdown__label">Next Birthday</span>
+                  <span id="birthday-days" class="birthday-countdown__days"></span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 2: Gender -->
+          <article class="bento-card bento-card--small bento-card--gender" role="listitem" aria-label="Gender">
+            <div class="bento-card__accent-line"></div>
+            <div class="bento-card__inner">
+              <div class="bento-card__header">
+                <div class="bento-card__icon-wrap bento-card__icon-wrap--purple">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M12 12v10"/>
+                    <path d="M9 19l3 3 3-3"/>
+                  </svg>
+                </div>
+                <span class="bento-card__label">Gender</span>
+              </div>
+              <div class="bento-card__content">
+                <div id="gender-icon" class="gender-icon" aria-hidden="true"></div>
+                <div id="gender-value" class="gender-value"></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 3: Age -->
+          <article class="bento-card bento-card--small bento-card--age" role="listitem" aria-label="Age">
+            <div class="bento-card__accent-line"></div>
+            <div class="bento-card__inner">
+              <div class="bento-card__header">
+                <div class="bento-card__icon-wrap bento-card__icon-wrap--amber">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                </div>
+                <span class="bento-card__label">Age</span>
+              </div>
+              <div class="bento-card__content">
+                <div id="age-value" class="age-value"></div>
+                <div id="age-sub" class="age-sub"></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 4: Voting Status -->
+          <article class="bento-card bento-card--small bento-card--voting" role="listitem" aria-label="Voting Status">
+            <div class="bento-card__accent-line"></div>
+            <div class="bento-card__inner">
+              <div class="bento-card__header">
+                <div class="bento-card__icon-wrap bento-card__icon-wrap--emerald">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                </div>
+                <span class="bento-card__label">Voting Status</span>
+              </div>
+              <div class="bento-card__content">
+                <div id="voting-badge" class="voting-badge"></div>
+                <div id="voting-desc" class="voting-desc"></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 5: Zodiac Sign -->
+          <article class="bento-card bento-card--small bento-card--zodiac" role="listitem" aria-label="Zodiac Sign">
+            <div class="bento-card__accent-line"></div>
+            <div class="bento-card__inner">
+              <div class="bento-card__header">
+                <div class="bento-card__icon-wrap bento-card__icon-wrap--rose">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                  </svg>
+                </div>
+                <span class="bento-card__label">Zodiac Sign</span>
+              </div>
+              <div class="bento-card__content">
+                <div id="zodiac-symbol" class="zodiac-symbol" aria-hidden="true"></div>
+                <div id="zodiac-name" class="zodiac-name"></div>
+                <div id="zodiac-dates" class="zodiac-dates"></div>
+              </div>
+            </div>
+          </article>
+
+        </div><!-- /bento-grid -->
+
+        <!-- Reset Button -->
+        <button id="reset-btn" class="reset-btn" aria-label="Reset and decode another NIC">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 1 0 .49-3.63"/>
+          </svg>
+          Decode Another
+        </button>
+
+      </section><!-- /results-section -->
+
+      <!-- Info Modal Overlay -->
+      <div id="info-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+        <div class="modal-card glass-card">
+          <button id="modal-close" class="modal-close" aria-label="Close information modal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+          <h2 id="modal-title" class="modal-title">How It Works</h2>
+          <div class="modal-body">
+            <div class="modal-section">
+              <h3 class="modal-section-title">
+                <span class="modal-section-badge modal-section-badge--old">Old Format</span>
+              </h3>
+              <p>9 digits + V or X letter (e.g., <code>850421234V</code>)</p>
+              <ul>
+                <li><strong>Digits 1–2:</strong> Year of birth (19XX)</li>
+                <li><strong>Digits 3–5:</strong> Day of year (add 500 for Female)</li>
+                <li><strong>Digits 6–9:</strong> Serial number</li>
+                <li><strong>Letter:</strong> V = Eligible to vote · X = Not eligible</li>
+              </ul>
+            </div>
+            <div class="modal-section">
+              <h3 class="modal-section-title">
+                <span class="modal-section-badge modal-section-badge--new">New Format</span>
+              </h3>
+              <p>12 digits only (e.g., <code>198504210034</code>)</p>
+              <ul>
+                <li><strong>Digits 1–4:</strong> Full year of birth</li>
+                <li><strong>Digits 5–7:</strong> Day of year (add 500 for Female)</li>
+                <li><strong>Digits 8–11:</strong> Serial number</li>
+                <li><strong>Digit 12:</strong> Check digit</li>
+              </ul>
+            </div>
+            <p class="modal-note">⚡ All parsing happens locally in your browser. No data is sent to any server.</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+      <p>Made with <span aria-label="love">♥</span> for Sri Lanka &nbsp;·&nbsp; All processing is <strong>100% local</strong></p>
+    </footer>
+
+  </div><!-- /app-shell -->
+
+  <script src="app.js"></script>
+</body>
+</html>
